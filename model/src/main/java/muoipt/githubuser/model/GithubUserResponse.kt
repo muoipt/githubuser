@@ -4,11 +4,6 @@ import com.squareup.moshi.Json
 import com.squareup.moshi.JsonClass
 
 @JsonClass(generateAdapter = true)
-data class GithubUserResponse(
-    val results: List<GithubUser> = listOf()
-)
-
-@JsonClass(generateAdapter = true)
 data class GithubUser(
     @field:Json(name = "login") val login: String = "",
     @field:Json(name = "avatar_url") val avatarUrl: String = "",

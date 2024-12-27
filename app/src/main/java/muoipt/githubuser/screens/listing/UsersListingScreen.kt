@@ -12,30 +12,27 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
-import kotlinx.coroutines.launch
 import muoipt.githubuser.components.CircleProgressBar
-import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.model.GithubUserData
 
 @Composable
 fun ArticlesListingScreen(
     modifier: Modifier,
-    viewModel: ArticlesListingMVViewModel = hiltViewModel(),
+    viewModel: UsersListingViewModel = hiltViewModel(),
     onDetailClicked: (loginUser: String) -> Unit
 ) {
-    val state by viewModel.uiState.collectAsStateWithLifecycle()
+//    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val state by viewModel.uiState.collectAsState()
     val uiState = state as? UsersListingUIState
 
     val isLoading by remember(uiState?.isLoading) {
@@ -86,16 +83,16 @@ private fun SetupUi(
     onDetailClicked: (title: String) -> Unit,
 ) {
     val listState = rememberLazyListState()
-    val coroutineScope = rememberCoroutineScope()
+//    val coroutineScope = rememberCoroutineScope()
 
-    LaunchedEffect(usersList) {
-        AppLog.listing("listState.firstVisibleItemIndex = ${listState.firstVisibleItemIndex}")
-        coroutineScope.launch {
-            listState.animateScrollToItem(
-                listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset
-            )
-        }
-    }
+//    LaunchedEffect(usersList) {
+//        AppLog.listing("listState.firstVisibleItemIndex = ${listState.firstVisibleItemIndex}")
+//        coroutineScope.launch {
+//            listState.animateScrollToItem(
+//                listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset
+//            )
+//        }
+//    }
 
     LazyColumn(
         state = listState, modifier = modifier.fillMaxWidth()

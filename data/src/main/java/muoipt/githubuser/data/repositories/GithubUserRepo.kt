@@ -49,7 +49,7 @@ class GithubUserRepoImpl @Inject constructor(
 
     private suspend fun fetchUsers(since: Int) {
         val remoteResponse = userRemoteApi.getUsers(USERS_PER_PAGE, since)
-        val userEntities = remoteResponse.results.map { it.toEntity() }
+        val userEntities = remoteResponse.map { it.toEntity() }
 
         AppLog.listing("fetchUsers userRemoteApi.getUsers with since = $since")
         userLocalApi.upsert(userEntities)
