@@ -47,6 +47,11 @@ kapt {
 
 dependencies {
 
+    implementation(project(":model"))
+    implementation(project(":network"))
+    implementation(project(":database"))
+    implementation(project(":common"))
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.material)
