@@ -20,7 +20,7 @@ import muoipt.githubuser.model.GithubUserEntity
 import javax.inject.Inject
 
 interface GetUserListUseCase {
-    fun call(): Flow<PagingData<GithubUserData>>
+    fun execute(): Flow<PagingData<GithubUserData>>
 }
 
 class GetUserListUseCaseImpl @Inject constructor(
@@ -30,7 +30,7 @@ class GetUserListUseCaseImpl @Inject constructor(
 ): GetUserListUseCase {
 
     @OptIn(ExperimentalPagingApi::class)
-    override fun call(): Flow<PagingData<GithubUserData>> {
+    override fun execute(): Flow<PagingData<GithubUserData>> {
         AppLog.listing("Muoi123 => GetUserListUseCaseImpl call is triggered")
 
         return Pager(
