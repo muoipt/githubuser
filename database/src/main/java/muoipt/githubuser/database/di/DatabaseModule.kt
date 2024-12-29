@@ -7,6 +7,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import muoipt.githubuser.database.UserDb
+import muoipt.githubuser.database.dao.RemoteKeysDao
 import muoipt.githubuser.database.dao.UserDao
 
 @Module
@@ -17,5 +18,8 @@ internal class DatabaseModule {
 
     @Provides
     fun userDao(db: UserDb): UserDao = db.userDao()
+
+    @Provides
+    fun remoteKeysDao(db: UserDb): RemoteKeysDao = db.remoteKeysDao()
 
 }

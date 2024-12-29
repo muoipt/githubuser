@@ -25,13 +25,6 @@ interface BaseDao<in T> {
 }
 
 @Transaction
-suspend fun <T> BaseDao<T>.upsert(entity: T) {
-    if (insert(entity) == -1L) {
-        update(entity)
-    }
-}
-
-@Transaction
 suspend inline fun <reified T> BaseDao<T>.upsert(entities: List<T>) {
     val result = insert(*entities.toTypedArray())
     if (result.contains(-1L)) {

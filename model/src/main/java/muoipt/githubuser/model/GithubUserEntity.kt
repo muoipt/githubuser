@@ -13,10 +13,10 @@ data class GithubUserEntity(
     val login: String = "",
 
     @ColumnInfo(name = "avatar_url")
-    val avatar_url: String = "",
+    val avatarUrl: String = "",
 
     @ColumnInfo(name = "html_url")
-    val html_url: String = "",
+    val htmlUrl: String = "",
 
     @ColumnInfo(name = "location")
     val location: String = "",

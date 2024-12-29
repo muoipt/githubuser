@@ -5,68 +5,125 @@ import androidx.paging.LoadType
 import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
-import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.data.mapper.toEntity
+import muoipt.githubuser.data.repositories.GithubUserRepo.Companion.USERS_PER_PAGE
 import muoipt.githubuser.database.UserDb
 import muoipt.githubuser.database.dao.UserDao
 import muoipt.githubuser.model.GithubUserEntity
+import muoipt.githubuser.model.RemoteKeysEntity
 import muoipt.githubuser.network.api.GitHubUserApi
+import java.io.IOException
 import javax.inject.Inject
+
+private const val GITHUB_USER_STARTING_INDEX = 0
 
 @OptIn(ExperimentalPagingApi::class)
 class UsersRemoteMediator @Inject constructor(
     private val db: UserDb,
     private val githubUserDao: UserDao,
     private val remoteDataSource: GitHubUserApi
-): RemoteMediator<Int, GithubUserEntity>() {
-
-    companion object {
-        var pageCount = 0 // number of pages are currently loaded
-    }
+) : RemoteMediator<Int, GithubUserEntity>() {
 
     override suspend fun initialize(): InitializeAction {
+        // Launch remote refresh for the first time launch when local database does not have any item
+        // and skip init refresh if local db already store data
         val existingItemsInDb = githubUserDao.count()
-        pageCount = existingItemsInDb / 20
 
         return if(existingItemsInDb == 0) InitializeAction.LAUNCH_INITIAL_REFRESH
         else InitializeAction.SKIP_INITIAL_REFRESH
     }
 
-    override suspend fun load(
-        loadType: LoadType,
-        state: PagingState<Int, GithubUserEntity>
-    ): MediatorResult {
-        AppLog.listing("Muoi*** -> UsersRemoteMediator load loadType = $loadType")
+    override suspend fun load(loadType: LoadType, state: PagingState<Int, GithubUserEntity>): MediatorResult {
 
-        return try {
-            if (loadType == LoadType.PREPEND) return MediatorResult.Success(endOfPaginationReached = true)
+        val page = when (loadType) {
+            LoadType.REFRESH -> {
+                val remoteKeys = getRemoteKeyClosestToCurrentPosition(state)
+                remoteKeys?.nextKey?.minus(USERS_PER_PAGE) ?: GITHUB_USER_STARTING_INDEX
+            }
+            LoadType.PREPEND -> {
+                val remoteKeys = getRemoteKeyForFirstItem(state)
+                // If remoteKeys is null, that means the refresh result is not in the database yet.
+                // We can return Success with `endOfPaginationReached = false` because Paging
+                // will call this method again if RemoteKeys becomes non-null.
+                // If remoteKeys is NOT NULL but its prevKey is null, that means we've reached
+                // the end of pagination for prepend.
+                val prevKey = remoteKeys?.prevKey
+                if (prevKey == null) {
+                    return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                }
+                prevKey
+            }
+            LoadType.APPEND -> {
+                val remoteKeys = getRemoteKeyForLastItem(state)
+                // If remoteKeys is null, that means the refresh result is not in the database yet.
+                // We can return Success with `endOfPaginationReached = false` because Paging
+                // will call this method again if RemoteKeys becomes non-null.
+                // If remoteKeys is NOT NULL but its nextKey is null, that means we've reached
+                // the end of pagination for append.
+                val nextKey = remoteKeys?.nextKey
+                if (nextKey == null) {
+                    return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
+                }
+                nextKey
+            }
+        }
 
-            val since = pageCount * state.config.pageSize
-            pageCount++
-            AppLog.listing("Muoi*** -> UsersRemoteMediator load remoteDataSource.getUsers with itemPerPage = ${state.config.pageSize} and since = $since")
-
-//            // Check if data already exists in the local database
-//            val existingUsers = githubUserDao.getUsersByRange(since, state.config.pageSize)
-//            if (existingUsers.isNotEmpty() && existingUsers.size == state.config.pageSize) {
-//                AppLog.listing("Muoi*** -> Data already exists in the local database, skipping network request")
-//                return MediatorResult.Success(endOfPaginationReached = false)
-//            }
-
-            val response = remoteDataSource.getUsers(state.config.pageSize, since)
+        try {
+            val response = remoteDataSource.getUsers(USERS_PER_PAGE, page)
             val users = response.map { it.toEntity() }
 
+            val endOfPaginationReached = users.isEmpty()
             db.withTransaction {
+                // clear all tables in the database
                 if (loadType == LoadType.REFRESH) {
-                    AppLog.listing("UsersRemoteMediator load loadType == LoadType.REFRESH")
-                    githubUserDao.deleteAll()
+                    db.remoteKeysDao().clearRemoteKeys()
+                    db.userDao().deleteAll()
                 }
-                val insertResult = githubUserDao.insertAll(users)
-                AppLog.listing("Muoi*** -> insertResult for users (${users.size}) = $insertResult")
+                val prevKey = if (page == GITHUB_USER_STARTING_INDEX) null else page - USERS_PER_PAGE
+                val nextKey = if (endOfPaginationReached) null else page + USERS_PER_PAGE
+                val keys = users.map {
+                    RemoteKeysEntity(userLogin = it.login, prevKey = prevKey, nextKey = nextKey)
+                }
+                db.remoteKeysDao().insertAll(keys)
+                db.userDao().insertAll(users)
             }
+            return MediatorResult.Success(endOfPaginationReached = endOfPaginationReached)
+        } catch (exception: IOException) {
+            return MediatorResult.Error(exception)
+        } catch (exception: Exception) {
+            return MediatorResult.Error(exception)
+        }
+    }
 
-            MediatorResult.Success(endOfPaginationReached = users.isEmpty())
-        } catch (e: Exception) {
-            MediatorResult.Error(e)
+    private suspend fun getRemoteKeyForLastItem(state: PagingState<Int, GithubUserEntity>): RemoteKeysEntity? {
+        // Get the last page that was retrieved, that contained items.
+        // From that last page, get the last item
+        return state.pages.lastOrNull() { it.data.isNotEmpty() }?.data?.lastOrNull()
+            ?.let { repo ->
+                // Get the remote keys of the last item retrieved
+                db.remoteKeysDao().remoteKeysByUserLogin(repo.login)
+            }
+    }
+
+    private suspend fun getRemoteKeyForFirstItem(state: PagingState<Int, GithubUserEntity>): RemoteKeysEntity? {
+        // Get the first page that was retrieved, that contained items.
+        // From that first page, get the first item
+        return state.pages.firstOrNull { it.data.isNotEmpty() }?.data?.firstOrNull()
+            ?.let { repo ->
+                // Get the remote keys of the first items retrieved
+                db.remoteKeysDao().remoteKeysByUserLogin(repo.login)
+            }
+    }
+
+    private suspend fun getRemoteKeyClosestToCurrentPosition(
+        state: PagingState<Int, GithubUserEntity>
+    ): RemoteKeysEntity? {
+        // The paging library is trying to load data after the anchor position
+        // Get the item closest to the anchor position
+        return state.anchorPosition?.let { position ->
+            state.closestItemToPosition(position)?.login?.let { userLogin ->
+                db.remoteKeysDao().remoteKeysByUserLogin(userLogin)
+            }
         }
     }
 }

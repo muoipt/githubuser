@@ -9,14 +9,14 @@ import muoipt.githubuser.model.GithubUserEntity
 
 fun GithubUser.toEntity() = GithubUserEntity(
     login = login,
-    avatar_url = avatarUrl,
-    html_url = htmlUrl
+    avatarUrl = avatarUrl,
+    htmlUrl = htmlUrl
 )
 
 fun GithubUserDetail.toEntity() = GithubUserEntity(
     login = login,
-    avatar_url = avatarUrl,
-    html_url = htmlUrl,
+    avatarUrl = avatarUrl,
+    htmlUrl = htmlUrl,
     location = location,
     followers = followers,
     following = following
@@ -24,14 +24,14 @@ fun GithubUserDetail.toEntity() = GithubUserEntity(
 
 fun GithubUserEntity.toDataModel() = GithubUserData(
     login = login,
-    avatarUrl = avatar_url,
-    htmlUrl = html_url
+    avatarUrl = avatarUrl,
+    htmlUrl = htmlUrl
 )
 
 fun GithubUserEntity.toDataDetailModel() = GithubUserDetailData(
     login = login,
-    avatarUrl = avatar_url,
-    htmlUrl = html_url,
+    avatarUrl = avatarUrl,
+    htmlUrl = htmlUrl,
     location = location,
     follower = followers,
     following = following

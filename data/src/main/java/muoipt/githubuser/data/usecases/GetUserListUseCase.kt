@@ -20,8 +20,6 @@ import muoipt.githubuser.model.GithubUserEntity
 import javax.inject.Inject
 
 interface GetUserListUseCase {
-    //    suspend fun getUser(withRefresh: Boolean): Flow<List<GithubUserData>>
-    fun getUser(): Flow<PagingData<GithubUserData>>
     fun call(): Flow<PagingData<GithubUserData>>
 }
 
@@ -30,27 +28,13 @@ class GetUserListUseCaseImpl @Inject constructor(
     private val usersRemoteMediator: UsersRemoteMediator,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): GetUserListUseCase {
-//    override suspend fun getUser(withRefresh: Boolean): Flow<List<GithubUserData>> {
-//        val dataStrategy = if(withRefresh){
-//            DataStrategy.REMOTE
-//        } else {
-//            DataStrategy.LOCAL
-//        }
-//        return githubUserRepo.getUsers(dataStrategy, 100)
-//    }
-
-    override fun getUser(): Flow<PagingData<GithubUserData>> {
-        AppLog.listing("GetUserListUseCaseImpl getUser")
-
-        return githubUserRepo.getUserWithPaging()
-    }
 
     @OptIn(ExperimentalPagingApi::class)
     override fun call(): Flow<PagingData<GithubUserData>> {
         AppLog.listing("Muoi123 => GetUserListUseCaseImpl call is triggered")
 
         return Pager(
-            config = PagingConfig(USERS_PER_PAGE),
+            config = PagingConfig(pageSize = USERS_PER_PAGE, enablePlaceholders = false),
             remoteMediator = usersRemoteMediator,
         ) {
             githubUserRepo.loadAllUsersPaged()

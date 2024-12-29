@@ -1,33 +1,21 @@
 package muoipt.githubuser.data.repositories
 
-import androidx.paging.ExperimentalPagingApi
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
 import androidx.paging.PagingSource
-import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.map
 import muoipt.githubuser.common.IoDispatcher
 import muoipt.githubuser.data.common.AppLog
-import muoipt.githubuser.data.mapper.toDataDetailModel
-import muoipt.githubuser.data.mapper.toDataModel
 import muoipt.githubuser.data.mapper.toEntity
 import muoipt.githubuser.data.repositories.GithubUserRepo.Companion.USERS_PER_PAGE
 import muoipt.githubuser.database.dao.UserDao
 import muoipt.githubuser.database.dao.upsert
-import muoipt.githubuser.model.GithubUserData
-import muoipt.githubuser.model.GithubUserDetailData
 import muoipt.githubuser.model.GithubUserEntity
 import muoipt.githubuser.network.api.GitHubUserApi
 import javax.inject.Inject
 
 interface GithubUserRepo {
 //    fun getUsers(strategy: DataStrategy = DataStrategy.AUTO, since: Int): Flow<List<GithubUserData>>
-    fun getUserDetail(loginUserName: String): Flow<GithubUserDetailData?>
-    fun getUserWithPaging():Flow<PagingData<GithubUserData>>
+//    fun getUserDetail(loginUserName: String): Flow<GithubUserDetailData?>
+//    fun getUserWithPaging():Flow<PagingData<GithubUserData>>
 
     fun loadAllUsersPaged():PagingSource<Int, GithubUserEntity>
 
@@ -39,7 +27,7 @@ interface GithubUserRepo {
 class GithubUserRepoImpl @Inject constructor(
     private val userRemoteApi: GitHubUserApi,
     private val userLocalApi: UserDao,
-    private val usersRemoteMediator: UsersRemoteMediator,
+//    private val usersRemoteMediator: UsersRemoteMediator,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): GithubUserRepo {
 //    override fun getUsers(strategy: DataStrategy, since: Int): Flow<List<GithubUserData>> {
@@ -64,26 +52,26 @@ class GithubUserRepoImpl @Inject constructor(
         userLocalApi.upsert(userEntities)
     }
 
-    override fun getUserDetail(loginUserName: String): Flow<GithubUserDetailData?> {
-        return userLocalApi.getByUserLogin(loginUserName).map { it?.toDataDetailModel() }
-    }
+//    override fun getUserDetail(loginUserName: String): Flow<GithubUserDetailData?> {
+//        return userLocalApi.getByUserLogin(loginUserName).map { it?.toDataDetailModel() }
+//    }
 
-    @OptIn(ExperimentalPagingApi::class)
-    override fun getUserWithPaging():Flow<PagingData<GithubUserData>>{
-        AppLog.listing("GithubUserRepoImpl getUserWithPaging")
-
-        return Pager(
-            config = PagingConfig(
-                pageSize = USERS_PER_PAGE,
-            ),
-            remoteMediator = usersRemoteMediator,
-            pagingSourceFactory = {
-                AppLog.listing("GithubUserRepoImpl getUserWithPaging userLocalApi.getAll()")
-
-                userLocalApi.getAll()
-            }
-        ).flow.flowOn(ioDispatcher).map { it.map { entity -> entity.toDataModel() } }
-    }
+//    @OptIn(ExperimentalPagingApi::class)
+//    override fun getUserWithPaging():Flow<PagingData<GithubUserData>>{
+//        AppLog.listing("GithubUserRepoImpl getUserWithPaging")
+//
+//        return Pager(
+//            config = PagingConfig(
+//                pageSize = USERS_PER_PAGE,
+//            ),
+//            remoteMediator = usersRemoteMediator,
+//            pagingSourceFactory = {
+//                AppLog.listing("GithubUserRepoImpl getUserWithPaging userLocalApi.getAll()")
+//
+//                userLocalApi.getAll()
+//            }
+//        ).flow.flowOn(ioDispatcher).map { it.map { entity -> entity.toDataModel() } }
+//    }
 
     override fun loadAllUsersPaged():PagingSource<Int, GithubUserEntity>{
         val result = userLocalApi.loadAllUserPaged()
