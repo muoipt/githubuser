@@ -14,7 +14,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import muoipt.githubuser.R
-import muoipt.githubuser.navigation.ScreenRoute
 import muoipt.githubuser.ui.theme.GitHubUserTheme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -25,7 +24,7 @@ fun Appbar(
     navigateUp: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    TopAppBar(title = { Text(currentScreenLabel ?: ScreenRoute.UsersListing.route) },
+    TopAppBar(title = { Text(currentScreenLabel ?: "") },
         colors = TopAppBarDefaults.mediumTopAppBarColors(
             containerColor = Color.White
         ),

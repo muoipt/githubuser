@@ -17,7 +17,7 @@ import androidx.navigation.compose.rememberNavController
 import dagger.hilt.android.AndroidEntryPoint
 import muoipt.githubuser.components.Appbar
 import muoipt.githubuser.navigation.NavigationGraph
-import muoipt.githubuser.navigation.ScreenRoute
+import muoipt.githubuser.navigation.UserListingNavigation
 import muoipt.githubuser.ui.theme.GitHubUserTheme
 
 @AndroidEntryPoint
@@ -39,9 +39,9 @@ private fun GithubUserApp(
 ) {
     val backStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute =
-        if (backStackEntry?.destination?.route == ScreenRoute.UsersListing.route) stringResource(
+        if (backStackEntry?.destination?.route == UserListingNavigation.route) stringResource(
             id = R.string.app_name
-        ) else backStackEntry?.destination?.route
+        ) else stringResource(R.string.app_bar_detail)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),

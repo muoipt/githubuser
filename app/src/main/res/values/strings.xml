@@ -2,4 +2,6 @@
     <string name="app_name">GitHubUser</string>
     <string name="error_no_internet_connection">No internet connection</string>
     <string name="back_button">Back</string>
+    <string name="app_bar_detail">User Details</string>
+
 </resources>
