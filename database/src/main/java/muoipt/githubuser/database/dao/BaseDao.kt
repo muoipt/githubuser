@@ -7,17 +7,19 @@ import androidx.room.Update
 
 interface BaseDao<in T> {
 
-    // todo change to OnConflictStrategy.REPLACE
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: T): Long
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(vararg entity: T): List<Long>
 
-    @Update(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertAll(entities: List<T>): List<Long>
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(entity: T)
 
-    @Update(onConflict = OnConflictStrategy.IGNORE)
+    @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg entity: T)
 
 }

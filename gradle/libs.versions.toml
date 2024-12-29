@@ -28,12 +28,15 @@ material = "1.12.0"
 constraintLayoutCompose = "1.0.1"
 composeLifecycle = "2.8.3"
 androidBrowser = "1.8.0"
+pagingVersion = "3.2.0"
+pagingCommonAndroid = "3.3.5"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
+androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
 androidx-room-ktx = { module = "androidx.room:room-ktx", version.ref = "roomRuntime" }
 
@@ -72,6 +75,13 @@ android-compose-material3 = { module = "androidx.compose.material3:material3" }
 android-constraintlayout-compose = { module = "androidx.constraintlayout:constraintlayout-compose", version.ref = "constraintLayoutCompose" }
 android-browser = { module = "androidx.browser:browser", version.ref = "androidBrowser" }
 robolectric = { module = "org.robolectric:robolectric", version.ref = "robolectric" }
+android-paging-runtime = { module = "androidx.paging:paging-runtime", version.ref = "pagingVersion" }
+android-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingVersion" }
+android-paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "pagingVersion" }
+androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+
+[bundles]
+androidPaging = ["android-paging-compose", "android-paging-runtime", "android-paging-common-ktx"]
 
 
 [plugins]

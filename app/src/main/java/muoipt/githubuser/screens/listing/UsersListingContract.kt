@@ -1,5 +1,6 @@
 package muoipt.githubuser.screens.listing
 
+import androidx.paging.PagingData
 import muoipt.githubuser.base.UIAction
 import muoipt.githubuser.data.common.UserError
 import muoipt.githubuser.model.GithubUserData
@@ -13,5 +14,5 @@ sealed class UsersListingAction: UIAction {
 data class UsersListingUIState(
     val isLoading: Boolean = false,
     val error: UserError? = null,
-    val users: List<GithubUserData> = listOf()
+    val usersPaging: PagingData<GithubUserData>? = null
 )

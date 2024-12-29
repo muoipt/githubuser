@@ -115,4 +115,6 @@ dependencies {
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
+
+    implementation(libs.bundles.androidPaging)
 }

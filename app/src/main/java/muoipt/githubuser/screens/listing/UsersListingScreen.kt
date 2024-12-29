@@ -9,119 +9,106 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
 import coil.compose.AsyncImage
 import muoipt.githubuser.components.CircleProgressBar
+import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.model.GithubUserData
 
+
 @Composable
-fun ArticlesListingScreen(
-    modifier: Modifier,
+fun UsersListingScreen1(
+    modifier: Modifier = Modifier,
     viewModel: UsersListingViewModel = hiltViewModel(),
     onDetailClicked: (loginUser: String) -> Unit
 ) {
-//    val state by viewModel.uiState.collectAsStateWithLifecycle()
-    val state by viewModel.uiState.collectAsState()
-    val uiState = state as? UsersListingUIState
+    val usersPagingData = viewModel.usersPagingData.collectAsLazyPagingItems()
+    AppLog.listing("UsersListingScreen1 usersPagingData = $usersPagingData")
 
-    val isLoading by remember(uiState?.isLoading) {
-        derivedStateOf { uiState?.isLoading }
-    }
+    LazyColumn(modifier = modifier.fillMaxSize()) {
+        AppLog.listing("UsersListingScreen1 usersPagingData.itemCount = ${usersPagingData.itemCount}")
 
-    val error by remember(uiState?.error) {
-        derivedStateOf { uiState?.error }
-    }
-
-    val usersList by remember(uiState?.users) {
-        derivedStateOf { uiState?.users ?: listOf() }
-    }
-
-    if (isLoading == true) {
-        CircleProgressBar()
-    } else {
-        if (error != null) {
-            ErrorUI(modifier, error?.errorMessage)
+        items(
+            count = usersPagingData.itemCount,
+            key = usersPagingData.itemKey { it.login },
+            contentType = usersPagingData.itemContentType { it.login }
+        ) { index ->
+            val user = usersPagingData[index]
+            if (user != null) {
+                UserItem(user, onDetailClicked)
+            }
         }
 
-        if (usersList.isEmpty()) {
-            EmptyUi(modifier)
-        } else {
-            SetupUi(modifier = modifier, usersList = usersList, onDetailClicked = {})
-        }
-    }
-}
+        usersPagingData.apply {
+            when {
+                loadState.refresh is LoadState.Loading -> {
+                    AppLog.listing("UsersListingScreen1 loadState.refresh is LoadState.Loading")
+                    item { LoadingRow() }
+                }
 
-@Composable
-private fun ErrorUI(modifier: Modifier, error: String?) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = error ?: "An error occurred!")
-    }
-}
+                loadState.append is LoadState.Loading -> {
+                    AppLog.listing("UsersListingScreen1 loadState.append is LoadState.Loading")
 
-@Composable
-private fun EmptyUi(modifier: Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "No article available")
-    }
-}
+                    item { LoadingRow() }
+                }
 
-@Composable
-private fun SetupUi(
-    modifier: Modifier,
-    usersList: List<GithubUserData>,
-    onDetailClicked: (title: String) -> Unit,
-) {
-    val listState = rememberLazyListState()
-//    val coroutineScope = rememberCoroutineScope()
+                loadState.refresh is LoadState.Error -> {
+                    AppLog.listing("UsersListingScreen1 loadState.refresh is LoadState.Error")
 
-//    LaunchedEffect(usersList) {
-//        AppLog.listing("listState.firstVisibleItemIndex = ${listState.firstVisibleItemIndex}")
-//        coroutineScope.launch {
-//            listState.animateScrollToItem(
-//                listState.firstVisibleItemIndex, listState.firstVisibleItemScrollOffset
-//            )
-//        }
-//    }
+                    val e = loadState.refresh as LoadState.Error
+                    item { ErrorRow(e.error.localizedMessage) }
+                }
 
-    LazyColumn(
-        state = listState, modifier = modifier.fillMaxWidth()
-    ) {
-        items(usersList.size) { index ->
-            ArticleItemView(usersList[index]) {
-                onDetailClicked(it)
+                loadState.append is LoadState.Error -> {
+                    AppLog.listing("UsersListingScreen1 loadState.append is LoadState.Error")
+
+                    val e = loadState.append as LoadState.Error
+                    item { ErrorRow(e.error.localizedMessage) }
+                }
             }
         }
     }
 }
 
 @Composable
-private fun ArticleItemView(
-    usersListingUiData: GithubUserData,
-    onDetailClicked: (title: String) -> Unit
-) {
+fun UserItem(user: GithubUserData, onDetailClicked: (loginUser: String) -> Unit) {
+    // Your user item UI implementation
     Column(modifier = Modifier
         .fillMaxWidth()
         .clickable {
-            onDetailClicked(usersListingUiData.login)
+            onDetailClicked(user.login)
         }) {
         AsyncImage(
-            model = usersListingUiData.avatarUrl, contentDescription = null, modifier = Modifier.fillMaxWidth()
+            model = user.avatarUrl, contentDescription = null, modifier = Modifier.fillMaxWidth()
         )
         Text(
-            modifier = Modifier.padding(16.dp), color = Color.Black, text = usersListingUiData.login
+            modifier = Modifier.padding(16.dp), color = Color.Black, text = user.login
         )
 
         Spacer(modifier = Modifier.height(16.dp))
+    }
+}
+
+@Composable
+fun LoadingRow() {
+    // Your loading row UI implementation
+    CircleProgressBar()
+}
+
+@Composable
+fun ErrorRow(errorMessage: String?) {
+    // Your error row UI implementation
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = errorMessage ?: "An error occurred!")
     }
 }
