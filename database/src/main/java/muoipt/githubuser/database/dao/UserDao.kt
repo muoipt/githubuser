@@ -18,6 +18,10 @@ interface UserDao: BaseDao<GithubUserEntity> {
     suspend fun deleteAll()
 
     suspend fun getUsersByRange(offset: Int, limit: Int): List<GithubUserEntity>
+
+     fun getAllWithLimit(limit: Int, offset: Int): PagingSource<Int, GithubUserEntity>
+
+     fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
 }
 
 @Dao
@@ -39,4 +43,11 @@ abstract class UserDaoImpl: UserDao {
 
     @Query("SELECT * FROM github_user LIMIT :limit OFFSET :offset")
     abstract override suspend fun getUsersByRange(offset: Int, limit: Int): List<GithubUserEntity>
+
+    @Query("SELECT * FROM github_user LIMIT :limit OFFSET :offset")
+    abstract override  fun getAllWithLimit(limit: Int, offset: Int): PagingSource<Int, GithubUserEntity>
+
+    @Query("SELECT * FROM github_user")
+    abstract override fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
 }
+

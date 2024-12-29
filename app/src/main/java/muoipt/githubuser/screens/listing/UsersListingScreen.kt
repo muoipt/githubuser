@@ -36,12 +36,12 @@ fun UsersListingScreen1(
     AppLog.listing("UsersListingScreen1 usersPagingData = $usersPagingData")
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
-        AppLog.listing("UsersListingScreen1 usersPagingData.itemCount = ${usersPagingData.itemCount}")
+        AppLog.listing("Muoi123 => UsersListingScreen1 usersPagingData.itemCount = ${usersPagingData.itemCount}")
 
         items(
             count = usersPagingData.itemCount,
             key = usersPagingData.itemKey { it.login },
-            contentType = usersPagingData.itemContentType { it.login }
+            contentType = usersPagingData.itemContentType { "user" }
         ) { index ->
             val user = usersPagingData[index]
             if (user != null) {

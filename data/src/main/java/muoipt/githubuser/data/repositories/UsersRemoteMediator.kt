@@ -45,12 +45,12 @@ class UsersRemoteMediator @Inject constructor(
             pageCount++
             AppLog.listing("Muoi*** -> UsersRemoteMediator load remoteDataSource.getUsers with itemPerPage = ${state.config.pageSize} and since = $since")
 
-            // Check if data already exists in the local database
-            val existingUsers = githubUserDao.getUsersByRange(since, state.config.pageSize)
-            if (existingUsers.isNotEmpty() && existingUsers.size == state.config.pageSize) {
-                AppLog.listing("Muoi*** -> Data already exists in the local database, skipping network request")
-                return MediatorResult.Success(endOfPaginationReached = false)
-            }
+//            // Check if data already exists in the local database
+//            val existingUsers = githubUserDao.getUsersByRange(since, state.config.pageSize)
+//            if (existingUsers.isNotEmpty() && existingUsers.size == state.config.pageSize) {
+//                AppLog.listing("Muoi*** -> Data already exists in the local database, skipping network request")
+//                return MediatorResult.Success(endOfPaginationReached = false)
+//            }
 
             val response = remoteDataSource.getUsers(state.config.pageSize, since)
             val users = response.map { it.toEntity() }

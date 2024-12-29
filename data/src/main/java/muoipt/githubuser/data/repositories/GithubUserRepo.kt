@@ -4,6 +4,7 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.PagingSource
 import androidx.paging.map
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
@@ -19,6 +20,7 @@ import muoipt.githubuser.database.dao.UserDao
 import muoipt.githubuser.database.dao.upsert
 import muoipt.githubuser.model.GithubUserData
 import muoipt.githubuser.model.GithubUserDetailData
+import muoipt.githubuser.model.GithubUserEntity
 import muoipt.githubuser.network.api.GitHubUserApi
 import javax.inject.Inject
 
@@ -26,6 +28,8 @@ interface GithubUserRepo {
 //    fun getUsers(strategy: DataStrategy = DataStrategy.AUTO, since: Int): Flow<List<GithubUserData>>
     fun getUserDetail(loginUserName: String): Flow<GithubUserDetailData?>
     fun getUserWithPaging():Flow<PagingData<GithubUserData>>
+
+    fun loadAllUsersPaged():PagingSource<Int, GithubUserEntity>
 
     companion object {
         const val USERS_PER_PAGE = 20
@@ -79,5 +83,11 @@ class GithubUserRepoImpl @Inject constructor(
                 userLocalApi.getAll()
             }
         ).flow.flowOn(ioDispatcher).map { it.map { entity -> entity.toDataModel() } }
+    }
+
+    override fun loadAllUsersPaged():PagingSource<Int, GithubUserEntity>{
+        val result = userLocalApi.loadAllUserPaged()
+        AppLog.listing("Muoi123 -> GithubUserRepoImpl loadAllUsersPaged result = $result")
+        return result
     }
 }

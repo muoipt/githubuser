@@ -2,18 +2,14 @@ package muoipt.githubuser.screens.listing
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
-import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.data.usecases.GetUserListUseCase
-import muoipt.githubuser.model.GithubUserData
 import javax.inject.Inject
 
 
@@ -28,12 +24,13 @@ class UsersListingViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, UsersListingUIState())
 
 
-    val usersPagingData = loadUserWithPaging()
+    val usersPagingData = getUserListUseCase.call().cachedIn(viewModelScope)
 
-    fun loadUserWithPaging(): Flow<PagingData<GithubUserData>> {
-        AppLog.listing("UsersListingViewModel loadUserWithPaging")
-        return getUserListUseCase.getUser().cachedIn(viewModelScope)
-    }
+//    fun loadUserWithPaging(): Flow<PagingData<GithubUserData>> {
+//        AppLog.listing("UsersListingViewModel loadUserWithPaging")
+////        return getUserListUseCase.getUser().cachedIn(viewModelScope)
+//        return getUserListUseCase.call().cachedIn(viewModelScope)
+//    }
 
 //    fun loadUsers() {
 //        viewModelScope.launch {
