@@ -7,9 +7,6 @@ import kotlinx.coroutines.flow.Flow
 import muoipt.githubuser.model.GithubUserEntity
 
 interface UserDao: BaseDao<GithubUserEntity> {
-    fun getAll(): PagingSource<Int, GithubUserEntity>
-
-    fun getAllUsers(): List<GithubUserEntity>
 
     fun getByUserLogin(login: String): Flow<GithubUserEntity?>
 
@@ -17,20 +14,13 @@ interface UserDao: BaseDao<GithubUserEntity> {
 
     suspend fun deleteAll()
 
-    suspend fun getUsersByRange(offset: Int, limit: Int): List<GithubUserEntity>
+    fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
 
-     fun getAllWithLimit(limit: Int, offset: Int): PagingSource<Int, GithubUserEntity>
-
-     fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
+    fun updateUser(login: String, location: String, followers: Int, following: Int)
 }
 
 @Dao
 abstract class UserDaoImpl: UserDao {
-    @Query("SELECT * FROM github_user")
-    abstract override fun getAll(): PagingSource<Int, GithubUserEntity>
-
-    @Query("SELECT * FROM github_user")
-    abstract override fun getAllUsers(): List<GithubUserEntity>
 
     @Query("SELECT * FROM github_user WHERE login = :login")
     abstract override fun getByUserLogin(login: String): Flow<GithubUserEntity?>
@@ -41,13 +31,15 @@ abstract class UserDaoImpl: UserDao {
     @Query("DELETE FROM github_user")
     abstract override suspend fun deleteAll()
 
-    @Query("SELECT * FROM github_user LIMIT :limit OFFSET :offset")
-    abstract override suspend fun getUsersByRange(offset: Int, limit: Int): List<GithubUserEntity>
-
-    @Query("SELECT * FROM github_user LIMIT :limit OFFSET :offset")
-    abstract override  fun getAllWithLimit(limit: Int, offset: Int): PagingSource<Int, GithubUserEntity>
-
     @Query("SELECT * FROM github_user")
     abstract override fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
+
+    @Query("UPDATE github_user SET location = :location, followers = :followers, following = :following WHERE login = :login")
+    abstract override fun updateUser(
+        login: String,
+        location: String,
+        followers: Int,
+        following: Int
+    )
 }
 

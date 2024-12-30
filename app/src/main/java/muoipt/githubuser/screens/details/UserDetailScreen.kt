@@ -1,6 +1,9 @@
 package muoipt.githubuser.screens.details
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,9 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
-//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,8 +23,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
@@ -36,13 +37,13 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil.compose.AsyncImage
 import muoipt.githubuser.R
 import muoipt.githubuser.components.CircleProgressBar
+import muoipt.githubuser.components.CustomTabOpener
+import muoipt.githubuser.components.UserAvatar
 import muoipt.githubuser.model.GithubUserDetailData
 import muoipt.githubuser.ui.theme.Background
 import muoipt.githubuser.ui.theme.GitHubUserTheme
-import muoipt.githubuser.ui.theme.Purple80
 import muoipt.githubuser.ui.theme.Shapes
 import muoipt.githubuser.ui.theme.Tertiary
 import muoipt.githubuser.utils.getFollowNumber
@@ -118,6 +119,7 @@ private fun SetupUi(
 
 @Composable
 private fun BlockCard(userDetail: GithubUserDetailData) {
+    val context = LocalContext.current
     Column(modifier = Modifier.padding(16.dp)) {
         Text(
             text = stringResource(R.string.blog),
@@ -126,7 +128,12 @@ private fun BlockCard(userDetail: GithubUserDetailData) {
         )
 
         Text(
-            modifier = Modifier.padding(top = 8.dp),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .clickable {
+                    // open the webpage from url
+                    CustomTabOpener.openCustomTabFromUrl(context, userDetail.htmlUrl)
+                },
             text = userDetail.htmlUrl,
             fontSize = 18.sp,
             color = Tertiary
@@ -206,27 +213,15 @@ private fun UserCard(userDetail: GithubUserDetailData) {
         val padding = 16.dp
         val smallPadding = 8.dp
 
-        Box(
+        UserAvatar(
             modifier = Modifier
-                .background(color = Background, shape = Shapes.medium)
                 .constrainAs(avatar) {
                     start.linkTo(parent.start, padding)
                     top.linkTo(parent.top, padding)
                     bottom.linkTo(parent.bottom, padding)
-                }) {
-
-
-            AsyncImage(
-                model = userDetail.avatarUrl,
-                contentDescription = "user_avatar",
-                modifier = Modifier
-                    .size(90.dp)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .background(color = Purple80, shape = CircleShape)
-
-            )
-        }
+                },
+            userDetail.avatarUrl
+        )
 
         Text(
             text = userDetail.login,
@@ -260,7 +255,6 @@ private fun UserCard(userDetail: GithubUserDetailData) {
         )
         Text(
             text = userDetail.location,
-            style = TextStyle(fontWeight = FontWeight.Normal),
             fontSize = 12.sp,
             color = Tertiary,
             modifier = Modifier.constrainAs(location) {

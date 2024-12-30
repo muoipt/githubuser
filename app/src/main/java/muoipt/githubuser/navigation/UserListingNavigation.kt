@@ -5,7 +5,7 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.composable
 import muoipt.githubuser.components.UserNavigationDestination
-import muoipt.githubuser.screens.listing.UsersListingScreen1
+import muoipt.githubuser.screens.listing.UsersListingScreen
 
 object UserListingNavigation: UserNavigationDestination {
 
@@ -19,7 +19,7 @@ fun NavGraphBuilder.userListing(modifier: Modifier, navController: NavHostContro
     composable(
         route = UserListingNavigation.route,
     ) {
-        UsersListingScreen1(modifier = modifier) { userLogin->
+        UsersListingScreen(modifier = modifier) { userLogin->
             navController.navigate(UserDetailNavigation.createRoute(userLogin))
         }
     }

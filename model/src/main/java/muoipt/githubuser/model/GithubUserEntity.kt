@@ -26,4 +26,6 @@ data class GithubUserEntity(
 
     @ColumnInfo(name = "following")
     val following: Int = 0
-)
+) {
+    fun isFetchedWithDetail() = location.isNotEmpty() || followers != 0 || following != 0
+}
