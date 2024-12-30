@@ -56,7 +56,8 @@ fun AppSnackBar(
         ) {
             CustomSnackBar(
                 message,
-                backgroundColor
+                backgroundColor,
+                infoIcon
             ) {
                 scaffoldState.snackbarHostState
                     .currentSnackbarData?.dismiss()
@@ -71,6 +72,7 @@ fun AppSnackBar(
 fun CustomSnackBar(
     message: String,
     backgroundColor: Color,
+    infoIcon: Int,
     onCloseClicked: () -> Unit
 ) {
     Snackbar(
@@ -88,7 +90,7 @@ fun CustomSnackBar(
                 val (icon, messageText, closeIcon) = createRefs()
 
                 Image(
-                    painter = painterResource(id = R.drawable.ic_close),
+                    painter = painterResource(id = infoIcon),
                     contentDescription = null,
                     contentScale = ContentScale.Fit,
                     modifier = Modifier

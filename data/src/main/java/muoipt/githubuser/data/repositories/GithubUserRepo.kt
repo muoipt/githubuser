@@ -21,10 +21,6 @@ interface GithubUserRepo {
     ): Flow<GithubUserDetailData?>
 
     fun loadAllUsersPaged(): PagingSource<Int, GithubUserEntity>
-
-    companion object {
-        const val USERS_PER_PAGE = 20
-    }
 }
 
 class GithubUserRepoImpl @Inject constructor(

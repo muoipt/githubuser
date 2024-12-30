@@ -1,10 +1,17 @@
 package muoipt.githubuser.base
 
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
+//noinspection UsingMaterialAndMaterial3Libraries
 import android.annotation.SuppressLint
 import android.content.Context
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Scaffold
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.ScaffoldState
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -30,7 +37,10 @@ fun BaseUi(
     val appSnackBarMessage = getErrorMessage(context, snackBarMessage)
 
     Scaffold(
-        modifier = modifier, scaffoldState = scaffoldState, snackbarHost = {
+        modifier = modifier.background(color = Color.Cyan),
+        scaffoldState = scaffoldState,
+        topBar = {},
+        snackbarHost = {
             if (appSnackBarMessage?.isNotEmpty() == true) {
                 AppSnackBar(
                     scaffoldState,
@@ -40,12 +50,13 @@ fun BaseUi(
                     action
                 )
             }
-        }, content = content
+        },
+        content = content
     )
 }
 
 private fun getErrorMessage(context: Context, snackBarMessage: String?): String? {
-    return if (!ConnectivityUtils.isConnected()) {
+    return if (!ConnectivityUtils.isConnected() && snackBarMessage != null) {
         context.getString(R.string.error_no_internet_connection)
     } else {
         snackBarMessage

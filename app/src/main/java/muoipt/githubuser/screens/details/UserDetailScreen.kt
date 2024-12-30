@@ -14,7 +14,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -38,6 +40,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import muoipt.githubuser.R
+import muoipt.githubuser.base.BaseUi
 import muoipt.githubuser.components.CircleProgressBar
 import muoipt.githubuser.components.CustomTabOpener
 import muoipt.githubuser.components.UserAvatar
@@ -75,27 +78,35 @@ fun UserDetailScreen(
 
     if (isLoading) {
         CircleProgressBar()
-    } else if (error != null) {
-        ErrorUI(modifier, error!!.message)
     } else {
-        SetupUi(modifier = modifier, userDetail = user)
+        BaseUi(
+            modifier = modifier.background(color = Color.Red),
+            content = {
+                if (error != null) {
+                    ErrorView(modifier, error!!.errorMessage)
+                } else {
+                    ContentView(userDetail = user)
+                }
+            }, snackBarMessage = error?.errorMessage
+        )
     }
 }
 
 @Composable
-private fun ErrorUI(modifier: Modifier, error: String?) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+private fun ErrorView(modifier: Modifier, error: String?) {
+    Box(modifier = modifier
+        .fillMaxSize()
+        .padding(16.dp), contentAlignment = Alignment.Center) {
         Text(text = error ?: stringResource(R.string.error))
     }
 }
 
 @Composable
-private fun SetupUi(
-    modifier: Modifier,
+private fun ContentView(
     userDetail: GithubUserDetailData
 ) {
     Column(
-        modifier = modifier
+        modifier = Modifier
             .fillMaxWidth()
     ) {
         UserCard(userDetail)
@@ -193,7 +204,7 @@ private fun UserCard(userDetail: GithubUserDetailData) {
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()
-            .padding(16.dp)
+            .padding(horizontal = 16.dp, vertical = 4.dp)
             .background(color = Color.White, shape = Shapes.medium)
     ) {
         val (avatar, userName, divider, locationIcon, location) = createRefs()

@@ -11,18 +11,18 @@ import muoipt.githubuser.components.UserNavigationDestination
 import muoipt.githubuser.screens.details.UserDetailScreen
 
 object UserDetailNavigation: UserNavigationDestination {
-    const val loginArg = "loginArg"
+    const val LOGIN_ARG = "loginArg"
 
     override val destination = "user_detail_destination"
 
-    override val route = "$destination?$loginArg={$loginArg}"
+    override val route = "$destination?$LOGIN_ARG={$LOGIN_ARG}"
 
     fun createRoute(login: String): String {
         val encodedLogin = Uri.encode(login)
-        return "$destination?$loginArg=$encodedLogin"
+        return "$destination?$LOGIN_ARG=$encodedLogin"
     }
 
-    fun getLogin(entry: NavBackStackEntry) = entry.arguments?.getString(loginArg)
+    fun getLogin(entry: NavBackStackEntry) = entry.arguments?.getString(LOGIN_ARG)
         ?: throw IllegalArgumentException("login user is required")
 }
 
@@ -30,7 +30,7 @@ fun NavGraphBuilder.userDetail(modifier: Modifier,) {
     composable(
         route = UserDetailNavigation.route,
         arguments = listOf(
-            navArgument(UserDetailNavigation.loginArg) {type = NavType.StringType}
+            navArgument(UserDetailNavigation.LOGIN_ARG) {type = NavType.StringType}
         )
     ) { navBackStackEntry ->
         val login = UserDetailNavigation.getLogin(navBackStackEntry)

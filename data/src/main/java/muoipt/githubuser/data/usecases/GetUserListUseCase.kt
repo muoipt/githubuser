@@ -13,7 +13,6 @@ import muoipt.githubuser.common.IoDispatcher
 import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.data.mapper.toDataModel
 import muoipt.githubuser.data.repositories.GithubUserRepo
-import muoipt.githubuser.data.repositories.GithubUserRepo.Companion.USERS_PER_PAGE
 import muoipt.githubuser.data.repositories.UsersRemoteMediator
 import muoipt.githubuser.model.GithubUserData
 import muoipt.githubuser.model.GithubUserEntity
@@ -28,6 +27,10 @@ class GetUserListUseCaseImpl @Inject constructor(
     private val usersRemoteMediator: UsersRemoteMediator,
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): GetUserListUseCase {
+
+    companion object {
+        const val USERS_PER_PAGE = 20
+    }
 
     @OptIn(ExperimentalPagingApi::class)
     override fun execute(): Flow<PagingData<GithubUserData>> {

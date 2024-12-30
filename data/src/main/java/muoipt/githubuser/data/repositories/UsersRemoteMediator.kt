@@ -6,7 +6,7 @@ import androidx.paging.PagingState
 import androidx.paging.RemoteMediator
 import androidx.room.withTransaction
 import muoipt.githubuser.data.mapper.toEntity
-import muoipt.githubuser.data.repositories.GithubUserRepo.Companion.USERS_PER_PAGE
+import muoipt.githubuser.data.usecases.GetUserListUseCaseImpl.Companion.USERS_PER_PAGE
 import muoipt.githubuser.database.UserDb
 import muoipt.githubuser.database.dao.UserDao
 import muoipt.githubuser.model.GithubUserEntity
@@ -48,9 +48,7 @@ class UsersRemoteMediator @Inject constructor(
                 // If remoteKeys is NOT NULL but its prevKey is null, that means we've reached
                 // the end of pagination for prepend.
                 val prevKey = remoteKeys?.prevKey
-                if (prevKey == null) {
-                    return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                }
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 prevKey
             }
             LoadType.APPEND -> {
@@ -61,9 +59,7 @@ class UsersRemoteMediator @Inject constructor(
                 // If remoteKeys is NOT NULL but its nextKey is null, that means we've reached
                 // the end of pagination for append.
                 val nextKey = remoteKeys?.nextKey
-                if (nextKey == null) {
-                    return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
-                }
+                    ?: return MediatorResult.Success(endOfPaginationReached = remoteKeys != null)
                 nextKey
             }
         }
