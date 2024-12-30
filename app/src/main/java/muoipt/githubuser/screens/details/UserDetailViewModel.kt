@@ -56,7 +56,7 @@ class UserDetailViewModel @Inject constructor(
                     }
                 } else {
                     _uiState.update {
-                        it.copy(isLoading = false, userDetail = data ?: GithubUserDetailData())
+                        it.copy(isLoading = false, userDetail = data)
                     }
                 }
             }

@@ -3,5 +3,9 @@
     <string name="error_no_internet_connection">No internet connection</string>
     <string name="back_button">Back</string>
     <string name="app_bar_detail">User Details</string>
+    <string name="error">An error occurred.</string>
+    <string name="empty">Data is not available</string>
+    <string name="blog">Blog</string>
+
 
 </resources>

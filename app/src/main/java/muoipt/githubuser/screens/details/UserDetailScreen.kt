@@ -1,13 +1,19 @@
 package muoipt.githubuser.screens.details
 
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.shape.CircleShape
+//noinspection UsingMaterialAndMaterial3Libraries
+import androidx.compose.material.Icon
+//noinspection UsingMaterialAndMaterial3Libraries
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,18 +22,35 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
+import muoipt.githubuser.R
 import muoipt.githubuser.components.CircleProgressBar
-import muoipt.githubuser.model.GithubUserData
 import muoipt.githubuser.model.GithubUserDetailData
+import muoipt.githubuser.ui.theme.Background
+import muoipt.githubuser.ui.theme.GitHubUserTheme
+import muoipt.githubuser.ui.theme.Purple80
+import muoipt.githubuser.ui.theme.Shapes
+import muoipt.githubuser.ui.theme.Tertiary
+import muoipt.githubuser.utils.getFollowNumber
 
 @Composable
 fun UserDetailScreen(
-    modifier: Modifier = Modifier, viewModel: UserDetailViewModel = hiltViewModel(),
+    modifier: Modifier = Modifier,
+    viewModel: UserDetailViewModel = hiltViewModel(),
     userLogin: String
 ) {
 
@@ -67,14 +90,14 @@ fun UserDetailScreen(
 @Composable
 private fun ErrorUI(modifier: Modifier, error: String?) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = error ?: "An error occurred!")
+        Text(text = error ?: stringResource(R.string.error))
     }
 }
 
 @Composable
 private fun EmptyUi(modifier: Modifier) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = "No user detail data available")
+        Text(text = stringResource(R.string.empty))
     }
 }
 
@@ -84,53 +107,219 @@ private fun SetupUi(
     userDetail: GithubUserDetailData
 ) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
     ) {
-
-        AsyncImage(
-            model = userDetail.avatarUrl,
-            contentDescription = null,
-            modifier = Modifier.fillMaxWidth()
-        )
-        Text(
-            modifier = Modifier.padding(16.dp), color = Color.Black, text = userDetail.login
-        )
-        Text(
-            modifier = Modifier.padding(16.dp), color = Color.Black, text = userDetail.location
-        )
-
-        Text(
-            modifier = Modifier.padding(16.dp),
-            color = Color.Black,
-            text = userDetail.follower.toString()
-        )
-
-        Text(
-            modifier = Modifier.padding(16.dp),
-            color = Color.Black,
-            text = userDetail.following.toString()
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        UserCard(userDetail)
+        FollowCard(userDetail)
+        BlockCard(userDetail)
     }
 }
 
 @Composable
-fun UserItem(user: GithubUserData, onDetailClicked: (loginUser: String) -> Unit) {
-    // Your user item UI implementation
-    Column(modifier = Modifier
-        .fillMaxWidth()
-        .clickable {
-            onDetailClicked(user.login)
-        }) {
-        AsyncImage(
-            model = user.avatarUrl, contentDescription = null, modifier = Modifier.fillMaxWidth()
-        )
+private fun BlockCard(userDetail: GithubUserDetailData) {
+    Column(modifier = Modifier.padding(16.dp)) {
         Text(
-            modifier = Modifier.padding(16.dp), color = Color.Black, text = user.login
+            text = stringResource(R.string.blog),
+            style = TextStyle(fontWeight = FontWeight.Bold),
+            fontSize = 20.sp,
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = userDetail.htmlUrl,
+            fontSize = 18.sp,
+            color = Tertiary
+        )
     }
 }
+
+@Composable
+private fun FollowCard(userDetail: GithubUserDetailData) {
+    Row(modifier = Modifier.padding(horizontal = 24.dp)) {
+        FollowItem(
+            modifier = Modifier.weight(1f),
+            number = getFollowNumber(userDetail.follower),
+            FollowType.FOLLOWER
+        )
+        FollowItem(
+            modifier = Modifier.weight(1f),
+            number = getFollowNumber(userDetail.following),
+            FollowType.FOLLOWING
+        )
+    }
+}
+
+@Composable
+private fun FollowItem(modifier: Modifier, number: String, followType: FollowType) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .background(color = Background, shape = CircleShape)
+                .padding(16.dp)
+        ) {
+            Icon(
+                painter = if (followType == FollowType.FOLLOWER)
+                    painterResource(id = R.drawable.ic_follower)
+                else painterResource(
+                    id = R.drawable.ic_following
+                ),
+                contentDescription = "follower_icon",
+                modifier = Modifier
+                    .size(36.dp)
+                    .background(color = Background)
+            )
+        }
+
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = number,
+            style = TextStyle(fontWeight = FontWeight.Bold),
+            fontSize = 16.sp,
+            textAlign = TextAlign.Center
+        )
+        Text(
+            modifier = Modifier.padding(top = 8.dp),
+            text = followType.type,
+            fontSize = 16.sp,
+            color = Tertiary,
+            textAlign = TextAlign.Center
+        )
+    }
+}
+
+@Composable
+private fun UserCard(userDetail: GithubUserDetailData) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(16.dp)
+            .background(color = Color.White, shape = Shapes.medium)
+    ) {
+        val (avatar, userName, divider, locationIcon, location) = createRefs()
+        val padding = 16.dp
+        val smallPadding = 8.dp
+
+        Box(
+            modifier = Modifier
+                .background(color = Background, shape = Shapes.medium)
+                .constrainAs(avatar) {
+                    start.linkTo(parent.start, padding)
+                    top.linkTo(parent.top, padding)
+                    bottom.linkTo(parent.bottom, padding)
+                }) {
+
+
+            AsyncImage(
+                model = userDetail.avatarUrl,
+                contentDescription = "user_avatar",
+                modifier = Modifier
+                    .size(90.dp)
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .background(color = Purple80, shape = CircleShape)
+
+            )
+        }
+
+        Text(
+            text = userDetail.login,
+            style = TextStyle(fontWeight = FontWeight.Bold),
+            fontSize = 20.sp,
+            modifier = Modifier.constrainAs(userName) {
+                start.linkTo(avatar.end, padding)
+                top.linkTo(parent.top, padding)
+            }
+        )
+        Box(
+            modifier = Modifier
+                .height(1.dp)
+                .background(color = Background)
+                .constrainAs(divider) {
+                    start.linkTo(avatar.end, padding)
+                    end.linkTo(parent.end, padding)
+                    top.linkTo(userName.bottom, smallPadding)
+                    width = Dimension.fillToConstraints
+                })
+        Icon(
+            painter = painterResource(id = R.drawable.ic_location),
+            contentDescription = "user_location",
+            tint = Tertiary,
+            modifier = Modifier
+                .size(20.dp)
+                .constrainAs(locationIcon) {
+                    start.linkTo(userName.start)
+                    top.linkTo(divider.bottom, smallPadding)
+                },
+        )
+        Text(
+            text = userDetail.location,
+            style = TextStyle(fontWeight = FontWeight.Normal),
+            fontSize = 12.sp,
+            color = Tertiary,
+            modifier = Modifier.constrainAs(location) {
+                start.linkTo(locationIcon.end, smallPadding)
+                top.linkTo(locationIcon.top)
+                bottom.linkTo(locationIcon.bottom)
+            }
+        )
+    }
+}
+
+enum class FollowType(val type: String) {
+    FOLLOWER("Follower"),
+    FOLLOWING("Following")
+}
+
+@Preview
+@Composable
+private fun UserCardPreview() {
+    GitHubUserTheme {
+        UserCard(
+            userDetail = GithubUserDetailData(
+                login = "User1",
+                avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
+                location = "Vietnam"
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun FollowItemPreview() {
+    GitHubUserTheme {
+        FollowCard(
+            userDetail = GithubUserDetailData(
+                login = "User1",
+                avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
+                location = "Vietnam",
+                follower = 100,
+                following = 21
+            )
+        )
+    }
+}
+
+@Preview
+@Composable
+private fun BlogCardPreview() {
+    GitHubUserTheme {
+        BlockCard(
+            userDetail = GithubUserDetailData(
+                login = "User1",
+                htmlUrl = "https://avatars.githubusercontent.com/u/1?v=4",
+                location = "Vietnam",
+                follower = 100,
+                following = 21
+            )
+        )
+    }
+}
+
