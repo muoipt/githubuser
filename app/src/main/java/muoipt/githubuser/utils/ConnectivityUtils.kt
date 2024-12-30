@@ -13,5 +13,3 @@ object ConnectivityUtils {
             && cm.getNetworkCapabilities(cm.activeNetwork) != null
     }
 }
-
-class NoConnectivityException: Exception("No internet connection")

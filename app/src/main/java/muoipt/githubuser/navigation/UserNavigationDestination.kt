@@ -1,4 +1,4 @@
-package muoipt.githubuser.components
+package muoipt.githubuser.navigation
 
 interface UserNavigationDestination {
     val route: String

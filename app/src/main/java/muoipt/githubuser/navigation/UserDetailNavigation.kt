@@ -7,7 +7,6 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import muoipt.githubuser.components.UserNavigationDestination
 import muoipt.githubuser.screens.details.UserDetailScreen
 
 object UserDetailNavigation: UserNavigationDestination {
