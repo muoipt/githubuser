@@ -47,8 +47,17 @@ class UserDetailViewModel @Inject constructor(
                     )
                 }
             }.collect { data ->
-                _uiState.update {
-                    it.copy(isLoading = false, userDetail = data ?: GithubUserDetailData())
+                if (data == null) {
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            error = UserError(UserErrorCode.LoadUserNotFound)
+                        )
+                    }
+                } else {
+                    _uiState.update {
+                        it.copy(isLoading = false, userDetail = data ?: GithubUserDetailData())
+                    }
                 }
             }
         }

@@ -2,24 +2,24 @@ package muoipt.githubuser.data.mapper
 
 import muoipt.githubuser.model.GithubUser
 import muoipt.githubuser.model.GithubUserData
-import muoipt.githubuser.model.GithubUserDetailData
 import muoipt.githubuser.model.GithubUserDetail
+import muoipt.githubuser.model.GithubUserDetailData
 import muoipt.githubuser.model.GithubUserEntity
 
 
 fun GithubUser.toEntity() = GithubUserEntity(
     login = login,
-    avatarUrl = avatarUrl,
-    htmlUrl = htmlUrl
+    avatarUrl = avatarUrl ?: "",
+    htmlUrl = htmlUrl ?: ""
 )
 
 fun GithubUserDetail.toEntity() = GithubUserEntity(
     login = login,
-    avatarUrl = avatarUrl,
-    htmlUrl = htmlUrl,
-    location = location,
-    followers = followers,
-    following = following
+    avatarUrl = avatarUrl ?: "",
+    htmlUrl = htmlUrl ?: "",
+    location = location ?: "",
+    followers = followers ?: 0,
+    following = following ?: 0
 )
 
 fun GithubUserEntity.toDataModel() = GithubUserData(

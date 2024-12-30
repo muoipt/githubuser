@@ -31,7 +31,7 @@ fun UserDetailScreen(
     userLogin: String
 ) {
 
-    LaunchedEffect(Unit) {
+    LaunchedEffect(userLogin) {
         viewModel.loadUserDetail(userLogin)
     }
 

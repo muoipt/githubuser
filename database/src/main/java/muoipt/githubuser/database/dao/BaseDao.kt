@@ -2,7 +2,6 @@ package muoipt.githubuser.database.dao
 
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.Transaction
 import androidx.room.Update
 
 interface BaseDao<in T> {
@@ -22,15 +21,4 @@ interface BaseDao<in T> {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun update(vararg entity: T)
 
-}
-
-@Transaction
-suspend inline fun <reified T> BaseDao<T>.upsert(entities: List<T>) {
-    val result = insert(*entities.toTypedArray())
-    if (result.contains(-1L)) {
-        val updateEntities = entities.mapIndexedNotNull { index, entity ->
-            if (result[index] == -1L) entity else null
-        }
-        update(*updateEntities.toTypedArray())
-    }
 }
