@@ -75,14 +75,8 @@ fun UserDetailScreen(
 
     if (isLoading) {
         CircleProgressBar()
-    }
-
-    if (error != null) {
+    } else if (error != null) {
         ErrorUI(modifier, error!!.message)
-    }
-
-    if (user.login.isBlank()) {
-        EmptyUi(modifier)
     } else {
         SetupUi(modifier = modifier, userDetail = user)
     }
@@ -92,13 +86,6 @@ fun UserDetailScreen(
 private fun ErrorUI(modifier: Modifier, error: String?) {
     Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = error ?: stringResource(R.string.error))
-    }
-}
-
-@Composable
-private fun EmptyUi(modifier: Modifier) {
-    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        Text(text = stringResource(R.string.empty))
     }
 }
 
