@@ -13,7 +13,7 @@ fun GithubUser.toEntity() = GithubUserEntity(
     htmlUrl = htmlUrl ?: ""
 )
 
-fun GithubUserDetail.toEntity() = GithubUserEntity(
+fun GithubUserDetail.toDataModel() = GithubUserDetailData(
     login = login,
     avatarUrl = avatarUrl ?: "",
     htmlUrl = htmlUrl ?: "",
@@ -33,6 +33,6 @@ fun GithubUserEntity.toDataDetailModel() = GithubUserDetailData(
     avatarUrl = avatarUrl,
     htmlUrl = htmlUrl,
     location = location,
-    follower = followers,
+    followers = followers,
     following = following
 )

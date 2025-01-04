@@ -1,16 +1,13 @@
 package muoipt.githubuser.data.usecases
 
+
 import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.map
-import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.map
-import muoipt.githubuser.common.IoDispatcher
-import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.data.mapper.toDataModel
 import muoipt.githubuser.data.repositories.GithubUserRepo
 import muoipt.githubuser.data.repositories.UsersRemoteMediator
@@ -23,9 +20,8 @@ interface GetUserListUseCase {
 }
 
 class GetUserListUseCaseImpl @Inject constructor(
-    private val githubUserRepo: GithubUserRepo,
     private val usersRemoteMediator: UsersRemoteMediator,
-    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
+    private val githubUserRepo: GithubUserRepo
 ): GetUserListUseCase {
 
     companion object {
@@ -34,18 +30,18 @@ class GetUserListUseCaseImpl @Inject constructor(
 
     @OptIn(ExperimentalPagingApi::class)
     override fun execute(): Flow<PagingData<GithubUserData>> {
-        AppLog.listing("Muoi123 => GetUserListUseCaseImpl call is triggered")
-
         return Pager(
-            config = PagingConfig(pageSize = USERS_PER_PAGE, enablePlaceholders = false),
+            config = PagingConfig(
+                pageSize = USERS_PER_PAGE,
+                enablePlaceholders = false
+            ),
             remoteMediator = usersRemoteMediator,
         ) {
             githubUserRepo.loadAllUsersPaged()
-        }.flow.flowOn(ioDispatcher)
-            .map { value: PagingData<GithubUserEntity> ->
-                value.map { entity ->
-                    entity.toDataModel()
-                }
+        }.flow.map { value: PagingData<GithubUserEntity> ->
+            value.map { entity ->
+                entity.toDataModel()
             }
+        }
     }
 }

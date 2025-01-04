@@ -84,4 +84,14 @@ dependencies {
     implementation(libs.moshi)
     ksp(libs.moshi.codegen)
     implementation(libs.moshi.codegen)
+
+    //test
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlin.mockito.kotlin)
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.androidx.core.testing)
+    testImplementation(libs.kotlinx.coroutines.test)
+    testImplementation(libs.mockwebserver)
+
+
 }

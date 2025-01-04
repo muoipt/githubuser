@@ -140,7 +140,7 @@ private fun FollowCard(userDetail: GithubUserDetailData) {
     Row(modifier = Modifier.padding(horizontal = 24.dp)) {
         FollowItem(
             modifier = Modifier.weight(1f),
-            number = getFollowNumber(userDetail.follower),
+            number = getFollowNumber(userDetail.followers),
             FollowType.FOLLOWER
         )
         FollowItem(
@@ -288,7 +288,7 @@ private fun FollowItemPreview() {
                 login = "User1",
                 avatarUrl = "https://avatars.githubusercontent.com/u/1?v=4",
                 location = "Vietnam",
-                follower = 100,
+                followers = 100,
                 following = 21
             )
         )
@@ -304,7 +304,7 @@ private fun BlogCardPreview() {
                 login = "User1",
                 htmlUrl = "https://avatars.githubusercontent.com/u/1?v=4",
                 location = "Vietnam",
-                follower = 100,
+                followers = 100,
                 following = 21
             )
         )

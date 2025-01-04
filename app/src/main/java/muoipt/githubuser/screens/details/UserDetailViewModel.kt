@@ -3,6 +3,7 @@ package muoipt.githubuser.screens.details
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import muoipt.githubuser.common.IoDispatcher
 import muoipt.githubuser.data.common.UserError
 import muoipt.githubuser.data.common.UserErrorCode
 import muoipt.githubuser.data.usecases.GetUserDetailUseCase
@@ -27,6 +29,7 @@ data class UserDetailUIState(
 @HiltViewModel
 class UserDetailViewModel @Inject constructor(
     private val getUserDetailUseCase: GetUserDetailUseCase,
+    @IoDispatcher private val ioDispatcher: CoroutineDispatcher
 ): ViewModel() {
     private var _uiState: MutableStateFlow<UserDetailUIState> =
         MutableStateFlow(UserDetailUIState())
@@ -34,7 +37,7 @@ class UserDetailViewModel @Inject constructor(
         .stateIn(viewModelScope, SharingStarted.Eagerly, UserDetailUIState())
 
     fun loadUserDetail(login: String) {
-        viewModelScope.launch {
+        viewModelScope.launch(ioDispatcher) {
             getUserDetailUseCase.getUserDetail(login).onStart {
                 _uiState.update {
                     it.copy(isLoading = true)

@@ -16,12 +16,12 @@ import muoipt.githubuser.data.usecases.GetUserListUseCaseImpl
 @InstallIn(SingletonComponent::class)
 interface DataModule {
     @Binds
-    fun bindArticleRepo(articleRepoImpl: GithubUserRepoImpl): GithubUserRepo
+    fun bindGithubUserRepo(githubUserRepoImpl: GithubUserRepoImpl): GithubUserRepo
 
     @Binds
-    fun bindGetArticleUseCase(getArticleUseCaseImpl: GetUserListUseCaseImpl): GetUserListUseCase
+    fun bindGetUserListUseCase(getUserListUseCaseImpl: GetUserListUseCaseImpl): GetUserListUseCase
 
     @Binds
-    fun bindGetArticleDetailUseCase(getArticleDetailUseCaseImpl: GetUserDetailUseCaseImpl): GetUserDetailUseCase
+    fun bindGetUserDetailUseCase(getUserDetailUseCaseImpl: GetUserDetailUseCaseImpl): GetUserDetailUseCase
 
 }

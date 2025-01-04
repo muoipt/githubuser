@@ -11,13 +11,19 @@ junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
 kotlinxCoroutinesTest = "1.7.3"
+kotlinxCoroutinesTestVersion = "1.6.4"
 lifecycleRuntimeKtx = "2.8.4"
 activityCompose = "1.9.1"
 composeBom = "2024.06.00"
 mockitoAndroid = "5.3.1"
-mockitoCore = "5.3.1"
+mockitoCore = "5.11.0"
+mockitoInline = "5.2.0"
+mockitoKotlinVersion = "3.2.0"
+mockwebserver = "4.11.0"
 moshi = "1.15.1"
 navigationCompose = "2.7.7"
+pagingCommonKtx = "3.1.1"
+pagingTesting = "3.3.5"
 robolectric = "4.10.3"
 roomRuntime = "2.6.1"
 retrofit = "2.10.0"
@@ -28,13 +34,17 @@ material = "1.12.0"
 constraintLayoutCompose = "1.0.1"
 composeLifecycle = "2.8.3"
 androidBrowser = "1.8.0"
-pagingVersion = "3.2.0"
+pagingVersion = "3.3.5"
 pagingCommonAndroid = "3.3.5"
+junitKtx = "1.2.1"
+turbine = "1.2.0"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 androidx-core-testing = { module = "androidx.arch.core:core-testing", version.ref = "coreTesting" }
 androidx-navigation-compose = { module = "androidx.navigation:navigation-compose", version.ref = "navigationCompose" }
+androidx-paging-common-ktx-v311 = { module = "androidx.paging:paging-common-ktx", version.ref = "pagingCommonKtx" }
+androidx-paging-testing = { module = "androidx.paging:paging-testing", version.ref = "pagingTesting" }
 androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref = "roomRuntime" }
 androidx-room-paging = { module = "androidx.room:room-paging", version.ref = "roomRuntime" }
 androidx-room-runtime = { module = "androidx.room:room-runtime", version.ref = "roomRuntime" }
@@ -57,9 +67,13 @@ androidx-ui-tooling-preview = { group = "androidx.compose.ui", name = "ui-toolin
 androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-manifest" }
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
+kotlin-mockito-kotlin = { module = "org.mockito.kotlin:mockito-kotlin", version.ref = "mockitoKotlinVersion" }
 kotlinx-coroutines-test = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTest" }
+kotlinx-coroutines-test-v164 = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-test", version.ref = "kotlinxCoroutinesTestVersion" }
 mockito-android = { module = "org.mockito:mockito-android", version.ref = "mockitoAndroid" }
 mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockitoCore" }
+mockito-inline = { module = "org.mockito:mockito-inline", version.ref = "mockitoInline" }
+mockwebserver = { module = "com.squareup.okhttp3:mockwebserver", version.ref = "mockwebserver" }
 moshi = { module = "com.squareup.moshi:moshi", version.ref = "moshi" }
 moshi-codegen = { module = "com.squareup.moshi:moshi-kotlin-codegen", version.ref = "moshi" }
 retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
@@ -79,6 +93,8 @@ android-paging-runtime = { module = "androidx.paging:paging-runtime", version.re
 android-paging-compose = { module = "androidx.paging:paging-compose", version.ref = "pagingVersion" }
 android-paging-common-ktx = { module = "androidx.paging:paging-common-ktx", version.ref = "pagingVersion" }
 androidx-paging-common-android = { group = "androidx.paging", name = "paging-common-android", version.ref = "pagingCommonAndroid" }
+androidx-junit-ktx = { group = "androidx.test.ext", name = "junit-ktx", version.ref = "junitKtx" }
+turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [bundles]
 androidPaging = ["android-paging-compose", "android-paging-runtime", "android-paging-common-ktx"]

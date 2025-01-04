@@ -12,6 +12,6 @@ data class GithubUserDetailData(
     val avatarUrl: String = "",
     val htmlUrl: String = "",
     val location: String = "",
-    val follower: Int = 0,
+    val followers: Int = 0,
     val following: Int = 0
 )

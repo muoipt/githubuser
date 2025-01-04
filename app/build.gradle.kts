@@ -64,6 +64,7 @@ dependencies {
 
     implementation(project(":model"))
     implementation(project(":data"))
+    implementation(project(":common"))
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
@@ -73,6 +74,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.androidx.junit.ktx)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -109,12 +111,17 @@ dependencies {
 
     implementation(libs.coil.compose)
 
+    implementation(libs.bundles.androidPaging)
+
     //test
     testImplementation(libs.mockito.core)
-    androidTestImplementation(libs.mockito.android)
     testImplementation(libs.androidx.core.testing)
     testImplementation(libs.kotlinx.coroutines.test)
     testImplementation(libs.robolectric)
+    implementation(libs.androidx.paging.testing)
+    testImplementation(libs.turbine)
 
-    implementation(libs.bundles.androidPaging)
+    testImplementation(libs.junit)
+    testImplementation(libs.mockito.inline)
+    testImplementation(libs.kotlin.mockito.kotlin)
 }

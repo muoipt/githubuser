@@ -5,7 +5,6 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.onStart
-import muoipt.githubuser.data.common.AppLog
 import muoipt.githubuser.data.common.DataStrategy
 import muoipt.githubuser.data.mapper.toDataDetailModel
 import muoipt.githubuser.database.dao.UserDao
@@ -30,7 +29,6 @@ class GithubUserRepoImpl @Inject constructor(
 
     override fun loadAllUsersPaged(): PagingSource<Int, GithubUserEntity> {
         val result = userLocalApi.loadAllUserPaged()
-        AppLog.listing("Muoi123 -> GithubUserRepoImpl loadAllUsersPaged result = $result")
         return result
     }
 
@@ -55,7 +53,7 @@ class GithubUserRepoImpl @Inject constructor(
     }
 
     private suspend fun fetchUserByUserName(loginUserName: String) {
-        val response = userRemoteApi.getUserByUserName(loginUserName)
+        val response = userRemoteApi.getByUserLogin(loginUserName)
         userLocalApi.updateUser(
             response.login,
             response.location ?: "",

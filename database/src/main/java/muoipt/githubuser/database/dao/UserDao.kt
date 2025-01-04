@@ -10,13 +10,13 @@ interface UserDao: BaseDao<GithubUserEntity> {
 
     fun getByUserLogin(login: String): Flow<GithubUserEntity?>
 
-    fun count(): Int
+    suspend fun count(): Int
 
     suspend fun deleteAll()
 
     fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
 
-    fun updateUser(login: String, location: String, followers: Int, following: Int)
+    suspend fun updateUser(login: String, location: String, followers: Int, following: Int)
 }
 
 @Dao
@@ -26,7 +26,7 @@ abstract class UserDaoImpl: UserDao {
     abstract override fun getByUserLogin(login: String): Flow<GithubUserEntity?>
 
     @Query("SELECT COUNT(*) FROM github_user")
-    abstract override fun count(): Int
+    abstract override suspend fun count(): Int
 
     @Query("DELETE FROM github_user")
     abstract override suspend fun deleteAll()
@@ -35,7 +35,7 @@ abstract class UserDaoImpl: UserDao {
     abstract override fun loadAllUserPaged(): PagingSource<Int, GithubUserEntity>
 
     @Query("UPDATE github_user SET location = :location, followers = :followers, following = :following WHERE login = :login")
-    abstract override fun updateUser(
+    abstract override suspend fun updateUser(
         login: String,
         location: String,
         followers: Int,
