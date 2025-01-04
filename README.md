@@ -19,7 +19,7 @@ This project demonstrates a simple Android app written in **Kotlin** using **Jet
   View detailed information about individual users by querying [https://api.github.com/users/{username}](https://api.github.com/users/{username}).
 
 - **Local Data Caching**  
-  User data is stored locally in a database to enable offline access.
+  User data is stored in a local database to ensure seamless offline access. When the app is launched again, previously fetched user data is displayed instantly without the need to re-fetch from the remote server.
 
 - **Unit Tests**  
   Unit tests ensure functionality and robustness.
